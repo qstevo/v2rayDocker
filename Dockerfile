@@ -13,7 +13,7 @@ RUN VERSION=${version} PLUGINS=${plugins} ENABLE_TELEMETRY=false /bin/sh /usr/bi
 #
 # Final stage
 #
-FROM alpine:3.9
+FROM arm64v8/alpine:3.9
 # process wrapper
 LABEL maintainer "Steve Q qstevo@outlook.com"
 
@@ -24,7 +24,7 @@ ENV TZ ${TZ}
 ENV V2RAY_VERSION v4.20.0
 ENV V2RAY_LOG_DIR /var/log/v2ray
 ENV V2RAY_CONFIG_DIR /etc/v2ray/
-ENV V2RAY_DOWNLOAD_URL https://github.com/v2ray/v2ray-core/releases/download/${V2RAY_VERSION}/v2ray-linux-64.zip
+ENV V2RAY_DOWNLOAD_URL https://github.com/v2ray/v2ray-core/releases/download/${V2RAY_VERSION}/v2ray-linux-arm64.zip
 
 RUN apk upgrade --update \
     && apk add \
