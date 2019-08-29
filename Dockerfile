@@ -1,18 +1,22 @@
 
 # Builder
 #
-FROM abiosoft/caddy:builder as builder
+# FROM abiosoft/caddy:builder as builder
+FROM golang:1.12-alpine as builder
+
+RUN apk add --no-cache git gcc musl-dev curl
 
 ARG version="1.0.3"
 ARG plugins="git,cors,realip,expires,cache"
+ARG goarch="GOARM=7 GOARCH=arm"
 
 
 RUN go get -v github.com/abiosoft/parent
-RUN VERSION=${version} PLUGINS=${plugins} ENABLE_TELEMETRY=false /bin/sh /usr/bin/builder.sh
-WORKDIR /builder/working/directory
-RUN apk add --no-cache curl
-RUN curl -L https://github.com/balena-io/qemu/releases/download/v3.0.0%2Bresin/qemu-3.0.0+resin-arm.tar.gz | tar zxvf - -C . && mv qemu-3.0.0+resin-arm/qemu-arm-static .
 
+RUN curl -L -H "Cache-Control: no-cache" -o /usr/bin/builder.sh \
+https://raw.githubusercontent.com/abiosoft/caddy-docker/${version}/builder/builder.sh \
+&& sed -i "s/GOARCH=amd64/${goarch}/" /usr/bin/builder.sh
+RUN VERSION=${version} PLUGINS=${plugins} ENABLE_TELEMETRY=false /bin/sh /usr/bin/builder.sh
 
 #
 # Final stage
@@ -20,7 +24,6 @@ RUN curl -L https://github.com/balena-io/qemu/releases/download/v3.0.0%2Bresin/q
 FROM arm32v7/alpine:3.9
 # process wrapper
 LABEL maintainer "Steve Q qstevo@outlook.com"
-COPY --from=builder /builder/working/directory/qemu-arm-static /usr/bin
 
 # V2RAY
 ARG TZ="America/Los_Angeles"
