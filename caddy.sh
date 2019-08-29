@@ -2,7 +2,7 @@
 # FILE="/etc/Caddy"
 domain="$1"
 psname="$2"
-uuid="51be9a06-299f-43b9-b713-1ec5eb76e3d7"
+uuid=""
 if  [ ! "$3" ] ;then
     uuid=$(uuidgen)
     echo "uuid 将会系统随机生成"
@@ -13,7 +13,7 @@ cat > /etc/Caddyfile <<'EOF'
 domain
 {
   log ./caddy.log
-  proxy /one :2333 {
+  proxy /7mcdn3wu :2333 {
     websocket
     header_upstream -Origin
   }
@@ -25,9 +25,15 @@ sed -i "s/domain/${domain}/" /etc/Caddyfile
 # v2ray
 cat > /etc/v2ray/config.json <<'EOF'
 {
+  "log": {
+    "loglevel": "info",
+    "access": "/var/log/v2ray/access.log",
+    "error": "/var/log/v2ray/error.log"
+  },
   "inbounds": [
     {
       "port": 2333,
+      "listen": "127.0.0.1",
       "protocol": "vmess",
       "settings": {
         "clients": [
@@ -40,7 +46,7 @@ cat > /etc/v2ray/config.json <<'EOF'
       "streamSettings": {
         "network": "ws",
         "wsSettings": {
-        "path": "/one"
+        "path": "/7mcdn3wu"
         }
       }
     }
@@ -64,7 +70,7 @@ cat > /srv/sebs.js <<'EOF'
     "host":"",
     "id":"uuid",
     "net":"ws",
-    "path":"/one",
+    "path":"/7mcdn3wu",
     "port":"443",
     "ps":"sebsclub",
     "tls":"tls",
