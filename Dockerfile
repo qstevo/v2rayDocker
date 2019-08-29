@@ -17,7 +17,7 @@ RUN curl -L https://github.com/balena-io/qemu/releases/download/v3.0.0%2Bresin/q
 #
 # Final stage
 #
-FROM arm64v8/alpine:3.9
+FROM arm32v7/alpine:3.9
 # process wrapper
 LABEL maintainer "Steve Q qstevo@outlook.com"
 COPY --from=builder /builder/working/directory/qemu-arm-static /usr/bin
@@ -29,7 +29,7 @@ ENV TZ ${TZ}
 ENV V2RAY_VERSION v4.20.0
 ENV V2RAY_LOG_DIR /var/log/v2ray
 ENV V2RAY_CONFIG_DIR /etc/v2ray/
-ENV V2RAY_DOWNLOAD_URL https://github.com/v2ray/v2ray-core/releases/download/${V2RAY_VERSION}/v2ray-linux-arm64.zip
+ENV V2RAY_DOWNLOAD_URL https://github.com/v2ray/v2ray-core/releases/download/${V2RAY_VERSION}/v2ray-linux-arm.zip
 
 RUN apk upgrade --update \
     && apk add \
