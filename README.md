@@ -19,7 +19,7 @@
 sudo DOMAIN=YOURDOMAIN.COM \
 docker run -d --rm --name v2ray_ws \
 -p 443:443 -p 80:80 -v $HOME/.caddy:/root/.caddy \
-qstevo/v2ray_ws_caddy:latest $DOMAIN V2RAY_WS\
+qstevo/v2ray_ws_caddy:latest $DOMAIN V2RAY_WS \
 && sleep 5s && sudo docker logs v2ray
 ```
 * 如果你想指定固定 uuid 的话， $UUID 这个 uuid 改为你自己的，https://www.uuidgenerator.net/ 这个网站可以生成随机 uuid。
@@ -27,7 +27,7 @@ qstevo/v2ray_ws_caddy:latest $DOMAIN V2RAY_WS\
 sudo DOMAIN=YOURDOMAIN.COM UUID=$(uuid -v4) \
 docker run -d --rm --name v2ray_ws \
 -p 443:443 -p 80:80 -v $HOME/.caddy:/root/.caddy \
-qstevo/v2ray_ws_caddy:latest $DOMAIN V2RAY_WS $UUID\
+qstevo/v2ray_ws_caddy:latest $DOMAIN V2RAY_WS $UUID \
 && sleep 5s && sudo docker logs v2ray
 ```
 
