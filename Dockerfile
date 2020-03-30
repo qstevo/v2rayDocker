@@ -1,19 +1,13 @@
-
+#
 # Builder
 #
-FROM abiosoft/caddy:builder as builder
+FROM golang:1.14-alpine3.11 AS builder
+# process wrapper
+RUN apk upgrade --update && apk add bash curl git && \
+    go get -v github.com/abiosoft/parent && \
+    curl https://getcaddy.com | bash -s personal http.cache,http.cors,http.expires,http.git,http.realip
 
-ARG version="1.0.3"
-ARG plugins="git,cors,realip,expires,cache"
-
-
-RUN go get -v github.com/abiosoft/parent
-RUN VERSION=${version} PLUGINS=${plugins} ENABLE_TELEMETRY=false /bin/sh /usr/bin/builder.sh
-
-#
-# Final stage
-#
-FROM alpine:3.10
+FROM alpine:3.11
 # process wrapper
 LABEL maintainer "Steve Q qstevo@outlook.com"
 
@@ -43,7 +37,6 @@ RUN apk upgrade --update \
     && mv /tmp/v2ray/vpoint_vmess_freedom.json /etc/v2ray/config.json \
     && chmod +x /usr/bin/v2ray \
     && chmod +x /usr/bin/v2ctl \
-    && apk del curl \
     && ln -sf /usr/share/zoneinfo/${TZ} /etc/localtime \
     && echo ${TZ} > /etc/timezone \
     && rm -rf /tmp/v2ray /var/cache/apk/*
@@ -52,13 +45,12 @@ RUN apk upgrade --update \
 WORKDIR /srv
 # node
 # install node 
-RUN apk add --no-cache util-linux
-RUN apk add --update nodejs nodejs-npm
+RUN apk add --no-cache util-linux && apk add --update nodejs nodejs-npm
 COPY package.json /srv/package.json
 RUN  npm install
 COPY  v2ray.js /srv/v2ray.js
 
-ARG version="1.0.3"
+ARG version="1.0.5"
 LABEL caddy_version="$version"
 
 # Let's Encrypt Agreement
@@ -70,7 +62,7 @@ ENV ENABLE_TELEMETRY="false"
 RUN apk add --no-cache openssh-client git
 
 # install caddy
-COPY --from=builder /install/caddy /usr/bin/caddy
+COPY --from=builder /usr/local/bin/caddy /usr/bin/caddy
 
 # validate install
 RUN /usr/bin/caddy -version
